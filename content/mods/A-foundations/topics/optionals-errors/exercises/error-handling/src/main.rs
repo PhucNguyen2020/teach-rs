@@ -24,11 +24,10 @@
 use std::io::{BufRead, self, Write};
 
 #[derive(Debug)]
-enum MyError{ InvalidName,IOError( io::Error),
+enum MyError{ InvalidName,IOError(io::Error),
 }
 
-fn get_username( )
-->  String
+fn get_username()->  Result<String, MyError>
 {
     print!("Username: ");
     io::stdout().flush();
@@ -41,11 +40,15 @@ fn get_username( )
 	if !char::is_alphabetic(c) { panic!("that's not a valid name, try again"); }
     }
 
-if input.is_empty() {
-panic!("that's not a valid name, try again");
-}
+    if input.is_empty() {
+    panic!("that's not a valid name, try again");
+    }
 
-    input
+    let result = match input {
+        Ok(input) => input,
+        Err(e) => returns Err(e)
+    }
+    result
 }
 
 fn main() {
