@@ -1,21 +1,21 @@
 //! You can't change anything except adding or removing references.
 
 fn main() {
-    let data = "Rust is great!".to_string();
+    let mut data = "Rust is great!".to_string();
 
-    get_char(data);
+    get_char(&data); // Pass a reference
 
-    string_uppercase(&data);
+    string_uppercase(&mut data);  // Pass a mutable reference 
 }
 
-// Should not take ownership
-fn get_char(data: String) -> char {
+// Should not take ownership (accepts a reference)
+fn get_char(data: &String) -> char {
     data.chars().last().unwrap()
 }
 
-// Should take ownership
-fn string_uppercase(mut data: &String) {
-    data = &data.to_uppercase();
+// Should take ownership (accepts a mutable reference)
+fn string_uppercase(data: &mut String) {
+    *data = data.to_uppercase(); // Modify the String in-place
 
     println!("{}", data);
 }

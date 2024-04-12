@@ -30,28 +30,39 @@ enum MyError{ InvalidName,IOError(io::Error),
 fn get_username()->  Result<String, MyError>
 {
     print!("Username: ");
-    io::stdout().flush();
+    io::stdout().flush().map_err(MyError::IOError)?;
 
     let mut input=String::new();
-    io::stdin().lock().read_line(&mut input); input=input.trim().to_string();
+    io::stdin().lock().read_line(&mut input).map_err(MyError::IOError)?;
+    input=input.trim().to_string();
 
     for c in input.chars()
     {
-	if !char::is_alphabetic(c) { panic!("that's not a valid name, try again"); }
+	    if !char::is_alphabetic(c) { 
+            return Err(MyError::InvalidName); 
+        }
     }
 
     if input.is_empty() {
-    panic!("that's not a valid name, try again");
+        return Err(MyError::InvalidName);
     }
-
-    let result = match input {
-        Ok(input) => input,
-        Err(e) => returns Err(e)
-    }
-    result
+    Ok(input)
 }
 
 fn main() {
-    let name=get_username();
-    println!("Hello {name}!")
+    loop {
+        match get_username() {
+            Ok(name) => {
+                println!("Hello {}!", name);
+                break;
+            }
+            Err(MyError::InvalidName) => {
+                println!("That's not a valid name, try again");
+            }
+            Err(MyError::IOError(..)) => {
+                println!("An error occurred while reading input");
+                break;
+            }
+        }
+    }
 }
